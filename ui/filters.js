@@ -9,7 +9,7 @@ async function initFilters() {
     const config = await invoke('load_filters');
     const categories = [
       { name: 'All', icon: '✦' },
-      ...config.categories.map(c => ({ name: c.name, icon: c.icon || '🏷️' }))
+      ...config.categories.map(c => ({ name: c.name, icon: c.icon || '📁' }))
     ];
 
     filterBar.innerHTML = '';
@@ -23,6 +23,16 @@ async function initFilters() {
       });
       filterBar.appendChild(btn);
     });
+
+    const dragHandle = document.querySelector('.drag-handle');
+    if (dragHandle) {
+      dragHandle.addEventListener('mousedown', async (e) => {
+        if (e.button === 0 && window.__TAURI__?.window?.getCurrentWindow) {
+          const appWindow = window.__TAURI__.window.getCurrentWindow();
+          await appWindow.startDragging();
+        }
+      });
+    }
   } catch (err) {
     console.error('Failed to load filters:', err);
   }

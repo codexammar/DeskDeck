@@ -33,6 +33,13 @@ async function initDock() {
 
     const dragHandle = document.querySelector('.drag-handle');
     if (dragHandle) {
+      dragHandle.addEventListener('mousedown', async (e) => {
+        if (e.button === 0 && window.__TAURI__?.window?.getCurrentWindow) {
+          const appWindow = window.__TAURI__.window.getCurrentWindow();
+          await appWindow.startDragging();
+        }
+      });
+
       dragHandle.addEventListener('dblclick', async () => {
         await invoke('snap_window_to_zone', { zone: 'bottom-center' });
       });

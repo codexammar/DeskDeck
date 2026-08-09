@@ -129,3 +129,26 @@ html, body {
   text-overflow: ellipsis;
   width: 100%;
 }
+
+.drag-handle {
+  height: 20px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  margin-bottom: 4px;
+  flex-shrink: 0;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.drag-pill {
+  width: 40px;
+  height: 5px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+  pointer-events: none; /* Allows click events to hit parent handle cleanly */
+}

@@ -3,37 +3,30 @@ let currentCategory = 'All';
 let currentKeywords = [];
 let currentZone = 'bottom'; // Options: 'bottom', 'top', 'left', 'right', 'center'
 
-async function updateWindowBounds(visibleCount) {
+async function updateWindowBounds(cols, rows) {
   if (!window.__TAURI__?.window?.getCurrentWindow) return;
   const appWindow = window.__TAURI__.window.getCurrentWindow();
 
-  const count = Math.max(visibleCount, 1);
+  // Exact component dimensions from CSS: card + gaps + container padding
   const cardWidth = 76;
   const cardHeight = 70;
-  const padding = 24;
+  const gap = 8;
+  const padding = 20; // 10px left/right and top/bottom
 
-  let newWidth = 600;
-  let newHeight = 220;
+  let targetWidth, targetHeight;
 
   if (currentZone === 'left' || currentZone === 'right') {
-    // 3:18 Ratio Vertical Stack
-    newWidth = 140;
-    newHeight = Math.min(Math.max(count * cardHeight + padding, 180), 720);
-  } else if (currentZone === 'top' || currentZone === 'bottom') {
-    // 18:3 Ratio Horizontal Strip
-    newWidth = Math.min(Math.max(count * cardWidth + padding, 200), 1080);
-    newHeight = 110;
+    targetWidth = cardWidth + padding;
+    targetHeight = (rows * cardHeight) + ((rows - 1) * gap) + padding;
   } else {
-    // Middle / Center Square ratio
-    const cols = Math.ceil(Math.sqrt(count));
-    const rows = Math.ceil(count / cols);
-    newWidth = Math.min(Math.max(cols * cardWidth + padding, 220), 800);
-    newHeight = Math.min(Math.max(rows * cardHeight + padding, 180), 800);
+    targetWidth = (cols * cardWidth) + ((cols - 1) * gap) + padding;
+    // Account for multiple rows and vertical gaps if items wrap past maxCols
+    targetHeight = (rows * cardHeight) + ((rows - 1) * gap) + padding;
   }
 
   const LogicalSize = window.__TAURI__?.window?.LogicalSize;
   if (LogicalSize) {
-    await appWindow.setSize(new LogicalSize(newWidth, newHeight));
+    await appWindow.setSize(new LogicalSize(targetWidth, targetHeight));
   }
 }
 
@@ -53,12 +46,22 @@ function renderShortcuts() {
     });
   });
 
-  // Adjust grid layout style
+  const count = Math.max(filtered.length, 1);
+  let cols = count;
+  let rows = 1;
+
   if (currentZone === 'left' || currentZone === 'right') {
+    cols = 1;
+    rows = count;
     gridContainer.className = 'grid-container grid-vertical';
   } else {
+    cols = Math.min(count, 8); // Max 8 columns per row before wrapping or capping
+    rows = Math.ceil(count / cols);
     gridContainer.className = 'grid-container grid-horizontal';
   }
+
+  // Pass dynamic column count to CSS variable safely
+  gridContainer.style.setProperty('--dock-cols', cols);
 
   gridContainer.innerHTML = '';
   filtered.forEach((item) => {
@@ -87,7 +90,7 @@ function renderShortcuts() {
     gridContainer.appendChild(card);
   });
 
-  updateWindowBounds(filtered.length);
+  updateWindowBounds(cols, rows);
 }
 
 async function initDock() {

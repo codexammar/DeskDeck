@@ -1,3 +1,24 @@
+async function updateWindowBounds() {
+  if (!window.__TAURI__?.window?.getCurrentWindow) return;
+  const appWindow = window.__TAURI__.window.getCurrentWindow();
+  const mainContainer = document.getElementById('mainContainer');
+  if (!mainContainer) return;
+
+  requestAnimationFrame(async () => {
+    // Force layout engine to flush so scrollWidth reads correctly
+    void mainContainer.offsetWidth;
+
+    // Container padding is 10px left + 10px right = 20px total
+    const targetWidth = mainContainer.scrollWidth;
+    const targetHeight = mainContainer.scrollHeight;
+
+    const LogicalSize = window.__TAURI__?.window?.LogicalSize;
+    if (LogicalSize) {
+      await appWindow.setSize(new LogicalSize(targetWidth, targetHeight));
+    }
+  });
+}
+
 async function initFilters() {
   const filterBar = document.getElementById('filterBar');
   const mainContainer = document.getElementById('mainContainer');
@@ -41,7 +62,7 @@ async function initFilters() {
 
     if (mainContainer) {
       mainContainer.addEventListener('mousedown', async (e) => {
-        if (e.button === 0 && e.target.classList.contains('glass-container') || e.target.classList.contains('filter-bar')) {
+        if (e.button === 0 && (e.target.classList.contains('glass-container') || e.target.classList.contains('filter-bar'))) {
           if (window.__TAURI__?.window?.getCurrentWindow) {
             const appWindow = window.__TAURI__.window.getCurrentWindow();
             await appWindow.startDragging();
@@ -49,6 +70,8 @@ async function initFilters() {
         }
       });
     }
+
+    updateWindowBounds();
   } catch (err) {
     console.error('Failed to load filters:', err);
   }

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "DeskDeck",
+  "version": "0.1.0",
+  "identifier": "com.deskdeck.dev",
+  "build": {
+    "frontendDist": "../ui"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "title": "DeskDeck Filters",
+        "label": "filter_window",
+        "url": "index.html",
+        "width": 600,
+        "height": 65,
+        "decorations": false,
+        "transparent": true,
+        "alwaysOnTop": true,
+        "resizable": false,
+        "x": 400,
+        "y": 500
+      },
+      {
+        "title": "DeskDeck Shortcuts",
+        "label": "dock_window",
+        "url": "dock.html",
+        "width": 600,
+        "height": 220,
+        "decorations": false,
+        "transparent": true,
+        "alwaysOnTop": true,
+        "resizable": false,
+        "x": 400,
+        "y": 570
+      }
+    ]
+  }
+}

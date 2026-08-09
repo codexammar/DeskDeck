@@ -7,11 +7,8 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="glass-container">
-    <div class="drag-handle" data-tauri-drag-region>
-      <div class="drag-pill" data-tauri-drag-region></div>
-    </div>
-    <div class="filter-bar" id="filterBar"></div>
+  <div class="glass-container" id="mainContainer" data-tauri-drag-region>
+    <div class="filter-bar" id="filterBar" data-tauri-drag-region></div>
   </div>
 
   <script src="filters.js" type="module"></script>

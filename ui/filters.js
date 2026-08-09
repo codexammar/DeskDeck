@@ -5,12 +5,11 @@ async function updateWindowBounds() {
   if (!mainContainer) return;
 
   requestAnimationFrame(async () => {
-    // Force layout engine to flush so scrollWidth reads correctly
     void mainContainer.offsetWidth;
 
-    // Container padding is 10px left + 10px right = 20px total
-    const targetWidth = mainContainer.scrollWidth;
-    const targetHeight = mainContainer.scrollHeight;
+    // Force layout recalculation to account for button dimensions and gaps
+    const targetWidth = mainContainer.scrollWidth + 2;
+    const targetHeight = mainContainer.scrollHeight + 2;
 
     const LogicalSize = window.__TAURI__?.window?.LogicalSize;
     if (LogicalSize) {
@@ -31,7 +30,7 @@ async function initFilters() {
 
     const config = await invoke('load_filters');
     const categories = [
-      { name: 'All', icon: '✦', keywords: [] },
+      { name: 'All', icon: '🧩', keywords: [] },
       ...config.categories
     ];
 
@@ -39,9 +38,11 @@ async function initFilters() {
     categories.forEach((cat, idx) => {
       const btn = document.createElement('button');
       btn.className = `filter-btn ${idx === 0 ? 'active' : ''}`;
-      btn.innerHTML = `<span class="filter-icon">${cat.icon}</span><span>${cat.name}</span>`;
+      
+      const iconSymbol = cat.icon || '•';
 
-      // Prevent dragging when clicking buttons
+      btn.innerHTML = `<span class="filter-icon">${iconSymbol}</span><span class="filter-text">${cat.name}</span>`;
+
       btn.addEventListener('mousedown', (e) => e.stopPropagation());
 
       btn.addEventListener('click', async (e) => {
@@ -71,7 +72,8 @@ async function initFilters() {
       });
     }
 
-    updateWindowBounds();
+    // Ensure bounds update happens after DOM paint and reflow completes
+    setTimeout(updateWindowBounds, 50);
   } catch (err) {
     console.error('Failed to load filters:', err);
   }

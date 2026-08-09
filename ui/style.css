@@ -17,53 +17,71 @@ html, body {
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   color: #FFFFFF;
   padding: 10px;
-  box-shadow: 0px 12px 32px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08); /* Adds glass rim boundary */
+  border-radius: 20px;
   display: inline-flex;
   flex-direction: column;
   cursor: grab;
 }
 
-.glass-container:active {
-  cursor: grabbing;
-}
-
+/* Filter bar layout matching your WrapPanel */
 .filter-bar {
   display: flex;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
   align-items: center;
-  justify-content: flex-start;
-  width: max-content;
-  flex-shrink: 0;
 }
 
+/* Liquid glass button style keeping exact original dimensions */
 .filter-btn {
+  background-color: rgba(255, 255, 255, 0.05); /* Liquid translucent base */
+  border: 1px solid rgba(255, 255, 255, 0.06); /* Matches shortcut-card border */
+  color: #FFFFFF;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  width: 100px;
+  height: 60px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  cursor: pointer;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  height: 38px;
-  background-color: rgba(255, 255, 255, 0.08);
-  color: #D1D5DB;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  white-space: nowrap;
-  padding: 0 16px;
-  flex: none;
+  transition: all 0.15s ease; /* Matches shortcut-card transition timing */
 }
 
+/* Hover effect matching the icon grid cards (lift and lighten) */
 .filter-btn:hover {
-  background-color: rgba(255, 255, 255, 0.18);
-  color: #FFFFFF;
+  transform: translateY(-2px);
+  background-color: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.25);
+  opacity: 1; /* Overrides the old opacity dimming to use liquid glass hover */
 }
 
+/* Active / Selected state keeping your highlight theme */
 .filter-btn.active {
-  background-color: #2ECC71;
-  color: #0D1117;
-  border-color: #2ECC71;
+  background-color: rgba(46, 204, 113, 0.25); /* Translucent glass tint for active state */
+  border-color: rgba(46, 204, 113, 0.5);
+}
+
+.filter-icon {
+  font-size: 20px;
+  line-height: 1;
+  margin-bottom: 4px;
+  filter: grayscale(100%) brightness(200%);
+  opacity: 0.85;
+}
+
+.filter-btn.active .filter-icon {
+  filter: grayscale(0%) brightness(100%);
+  opacity: 1;
+}
+
+.filter-text {
+  font-size: 12px;
+  line-height: 1;
 }
 
 .grid-container {
